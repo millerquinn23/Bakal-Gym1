@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Bakal Gym – Affordable fitness plans, beginner-friendly coaching, and a motivating community for students in Davao City." />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Bakal Gym Team" />
+  <meta property="og:title" content="Bakal Gym – Build Strength. Build Confidence." />
+  <meta property="og:description"
+    content="Affordable fitness plans, beginner-friendly coaching, and a motivating community for students and fitness beginners." />
+  <meta property="og:image" content="images/logo.jpg" />
+  <title>Bakal Gym | Build Strength. Build Confidence.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="images/logo.jpg" />
+</head>
+
+<body>
+
+  <!-- ======================== NAVBAR ======================== -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+    <a href="#hero" class="nav-brand" aria-label="Bakal Gym Home">BAKAL GYM</a>
+
+    <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation menu" aria-expanded="false"
+      aria-controls="nav-menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav-links" id="nav-menu" role="list">
+      <li><a href="#hero" class="nav-link">Home</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#programs" class="nav-link">Programs</a></li>
+      <li><a href="#membership" class="nav-link">Membership</a></li>
+      <li><a href="#payment-process" class="nav-link">Payment</a></li>
+      <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- ======================== HERO ======================== -->
+    <section id="hero" class="hero" role="banner" aria-labelledby="hero-heading">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-badge">Welcome to Bakal Gym</span>
+        <h1 id="hero-heading">Build Strength.<br>Build Confidence.<br><span class="hero-accent">Start at Bakal
+            Gym.</span></h1>
+        <p class="hero-sub">Affordable fitness plans, beginner-friendly coaching, and a motivating community for
+          students and fitness beginners.</p>
+        <div class="hero-buttons">
+          <a href="#membership" class="btn btn-primary" aria-label="View Membership Plans">View Membership Plans</a>
+          <a href="#contact" class="btn btn-outline" aria-label="Contact Us">Contact Us</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== TRUST BAR ======================== -->
+    <section class="trust-bar" aria-label="Trust highlights">
+      <div class="container trust-bar-inner">
+        <div class="trust-item"><span class="trust-icon">✅</span> Affordable Student Rates</div>
+        <div class="trust-item"><span class="trust-icon">🏋️</span> Beginner-Friendly Coaching</div>
+        <div class="trust-item"><span class="trust-icon">🔒</span> No Hidden Charges</div>
+        <div class="trust-item"><span class="trust-icon">🎫</span> Membership Card Provided</div>
+        <div class="trust-item"><span class="trust-icon">🤝</span> Safe & Respectful Environment</div>
+      </div>
+    </section>
+
+    <!-- ======================== ABOUT ======================== -->
+    <section id="about" class="about section" role="region" aria-labelledby="about-heading">
+      <div class="container about-grid">
+        <div class="about-image-wrap">
+          <img src="images/bakalg.jpg" alt="Inside Bakal Gym – training area with gym equipment" class="about-img"
+            loading="lazy" />
+        </div>
+        <div class="about-text">
+          <span class="section-label">About Us</span>
+          <h2 id="about-heading">A Gym Built for Students &amp; Beginners</h2>
+          <p>Bakal Gym is a local fitness gym built for students, beginners, and fitness enthusiasts who want an
+            affordable and supportive place to train. Whether your goal is to gain muscle, lose weight, improve
+            endurance, or stay active, Bakal Gym provides the space, equipment, and guidance to help you start.</p>
+          <p>We believe fitness should be accessible to everyone — not just those with big budgets. That's why we offer
+            student-friendly membership plans, beginner coaching, and a community that motivates you to keep going.</p>
+          <div class="about-stats">
+            <div class="stat-box">
+              <span class="stat-num">5+</span>
+              <span class="stat-label">Programs</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num">₱499</span>
+              <span class="stat-label">Starting Rate</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num">6AM</span>
+              <span class="stat-label">Opens Daily</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== PROGRAMS ======================== -->
+    <section id="programs" class="programs section section-dark" role="region" aria-labelledby="programs-heading">
+      <div class="container">
+        <span class="section-label light">What We Offer</span>
+        <h2 id="programs-heading" class="section-title light">Our Programs</h2>
+        <p class="section-sub light">From strength training to fun group classes — we have something for every fitness
+          goal.</p>
+
+        <div class="programs-grid">
+
+          <article class="program-card" tabindex="0" aria-label="Strength Training program">
+            <div class="program-img-wrap">
+              <img src="images/old-fashioned.jpg" alt="Strength training equipment at Bakal Gym" loading="lazy" />
+            </div>
+            <div class="program-body">
+              <h3>Strength Training</h3>
+              <p>Build muscle and increase power using our solid old-fashioned gym equipment. Perfect for beginners and
+                experienced lifters alike.</p>
+            </div>
+          </article>
+
+          <article class="program-card" tabindex="0" aria-label="Zumba Classes program">
+            <div class="program-img-wrap">
+              <img src="images/zumba.jpg" alt="Zumba group class at Bakal Gym" loading="lazy" />
+            </div>
+            <div class="program-body">
+              <h3>Zumba Classes</h3>
+              <p>Join our fun and energetic Zumba sessions led by certified instructors. Great for cardio, mood, and
+                burning calories.</p>
+            </div>
+          </article>
+
+          <article class="program-card" tabindex="0" aria-label="Personal Coaching program">
+            <div class="program-img-wrap">
+              <img src="images/coach.jpg" alt="Personal coaching session at Bakal Gym" loading="lazy" />
+            </div>
+            <div class="program-body">
+              <h3>Personal Coaching</h3>
+              <p>Get one-on-one guidance from our experienced coaches who will help you build a workout plan tailored to
+                your personal goals.</p>
+            </div>
+          </article>
+
+          <article class="program-card" tabindex="0" aria-label="Nutrition Guidance program">
+            <div class="program-img-wrap">
+              <img src="images/nutrition.jpg" alt="Nutrition tips and healthy eating guidance" loading="lazy" />
+            </div>
+            <div class="program-body">
+              <h3>Nutrition Guidance</h3>
+              <p>Learn the basics of eating right to fuel your workouts, recover faster, and reach your fitness goals
+                more effectively.</p>
+            </div>
+          </article>
+
+          <article class="program-card" tabindex="0" aria-label="Student-Friendly Fitness program">
+            <div class="program-img-wrap">
+              <img src="images/student.jpg" alt="Student-friendly fitness program at Bakal Gym" loading="lazy" />
+            </div>
+            <div class="program-body">
+              <h3>Student-Friendly Fitness</h3>
+              <p>Exclusive student rates, flexible schedules, and beginner-safe routines designed to fit your busy
+                student lifestyle.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== MEMBERSHIP PLANS ======================== -->
+    <section id="membership" class="membership section" role="region" aria-labelledby="membership-heading">
+      <div class="container">
+        <span class="section-label">Membership Plans</span>
+        <h2 id="membership-heading" class="section-title">Choose Your Plan</h2>
+        <p class="section-sub">Flexible, affordable plans designed for students and beginners. No hidden charges.</p>
+
+        <div class="plans-grid">
+
+          <!-- 1 Month -->
+          <article class="plan-card" aria-labelledby="plan1-title">
+            <div class="plan-header">
+              <h3 id="plan1-title">1 Month Plan</h3>
+              <div class="plan-price">₱1</div>
+              <p class="plan-tag">Best for beginners trying the gym</p>
+            </div>
+            <ul class="plan-features" aria-label="1 Month Plan features">
+              <li>✔ Gym access for 30 days</li>
+              <li>✔ Basic equipment use</li>
+              <li>✔ Beginner workout guidance</li>
+            </ul>
+            <button class="btn btn-plan" onclick="openModal('1 Month Plan', '₱1')"
+              aria-label="Choose 1 Month Plan for ₱499">Choose Plan</button>
+          </article>
+
+          <!-- 2 Months -->
+          <article class="plan-card" aria-labelledby="plan2-title">
+            <div class="plan-header">
+              <h3 id="plan2-title">2 Months Plan</h3>
+              <div class="plan-price">₱899</div>
+              <p class="plan-tag">Good for students who want consistency</p>
+            </div>
+            <ul class="plan-features" aria-label="2 Months Plan features">
+              <li>✔ Gym access for 60 days</li>
+              <li>✔ Basic workout guidance</li>
+              <li>✔ Progress tracking checklist</li>
+            </ul>
+            <button class="btn btn-plan" onclick="openModal('2 Months Plan', '₱899')"
+              aria-label="Choose 2 Months Plan for ₱899">Choose Plan</button>
+          </article>
+
+          <!-- 3 Months RECOMMENDED -->
+          <article class="plan-card plan-recommended" aria-labelledby="plan3-title">
+            <div class="plan-badge">⭐ Recommended</div>
+            <div class="plan-header">
+              <h3 id="plan3-title">3 Months Plan</h3>
+              <div class="plan-price">₱1,299</div>
+              <p class="plan-tag">Most popular among students</p>
+            </div>
+            <ul class="plan-features" aria-label="3 Months Plan features">
+              <li>✔ Gym access for 90 days</li>
+              <li>✔ Basic coaching support</li>
+              <li>✔ Nutrition tips</li>
+              <li>✔ Progress monitoring</li>
+            </ul>
+            <button class="btn btn-primary" onclick="openModal('3 Months Plan', '₱1,299')"
+              aria-label="Choose 3 Months Plan for ₱1,299">Choose Plan</button>
+          </article>
+
+          <!-- 1 Year -->
+          <article class="plan-card" aria-labelledby="plan4-title">
+            <div class="plan-header">
+              <h3 id="plan4-title">1 Year Plan</h3>
+              <div class="plan-price">₱4,999</div>
+              <p class="plan-tag">Best value — save more long-term</p>
+            </div>
+            <ul class="plan-features" aria-label="1 Year Plan features">
+              <li>✔ Gym access for 12 months</li>
+              <li>✔ Priority assistance</li>
+              <li>✔ Free fitness assessment</li>
+              <li>✔ Member ID/card upon verification</li>
+            </ul>
+            <button class="btn btn-plan" onclick="openModal('1 Year Plan', '₱4,999')"
+              aria-label="Choose 1 Year Plan for ₱4,999">Choose Plan</button>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== PAYMENT PROCESS ======================== -->
+    <section id="payment-process" class="payment-process section section-dark" role="region"
+      aria-labelledby="payment-heading">
+      <div class="container">
+        <span class="section-label light">How It Works</span>
+        <h2 id="payment-heading" class="section-title light">Payment Process</h2>
+        <p class="section-sub light">Simple, secure, and straightforward — here's what happens after you choose a plan.
+        </p>
+
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <h3>Choose a Plan</h3>
+            <p>Select the membership plan that fits your budget and fitness goals.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <h3>Secure Payment</h3>
+            <p>You are redirected to a secure payment gateway — GCash, Maya, card, or cash at the gym. We never collect
+              your card details directly.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <h3>Get Confirmation</h3>
+            <p>After successful payment, you receive a confirmation receipt or reference number via email or SMS.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <h3>Visit the Gym</h3>
+            <p>Show your receipt or reference number at the gym. Our staff will verify your payment.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <h3>Get Your Member ID</h3>
+            <p>Receive your membership card or digital confirmation. Your membership starts from verification date.</p>
+          </div>
+        </div>
+
+        <div class="assurance-box" role="note" aria-label="Payment assurance notice">
+          <span class="assurance-icon">🔒</span>
+          <div>
+            <strong>Your payment is secure.</strong>
+            <p>Your payment is processed through a secure payment gateway. Bakal Gym does not store your card details.
+              After payment, you will receive a confirmation receipt or reference number. Present it at the gym to claim
+              your membership card or activate your membership.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================== TESTIMONIALS ======================== -->
+    <section id="testimonials" class="testimonials section" role="region" aria-labelledby="testimonials-heading">
+      <div class="testimonials-bg" aria-hidden="true"></div>
+      <div class="container testimonials-inner">
+        <span class="section-label light">Member Stories</span>
+        <h2 id="testimonials-heading" class="section-title light">What Our Members Say</h2>
+
+        <div class="testimonials-grid">
+          <blockquote class="testimonial-card">
+            <img src="images/rolly.jpg" alt="Photo of Rolly, 2nd Year College student and Bakal Gym member"
+              class="testimonial-photo" loading="lazy" />
+            <p>"I really like the ambiance of the gym — very old-fashioned, very retro. The equipment is solid and the
+              coaches are very approachable. Best gym for students!"</p>
+            <footer><cite>— Rolly, 2nd Year College</cite></footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card">
+            <img src="images/mike.jpg" alt="Photo of Mike, 2nd Year College student and Bakal Gym member"
+              class="testimonial-photo" loading="lazy" />
+            <p>"Bakal Gym pushed me to become my best. The coaches are very kind and the rates are super affordable for
+              students like me. Highly recommended!"</p>
+            <footer><cite>— Mike, 2nd Year College</cite></footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== CONTACT ======================== -->
+    <section id="contact" class="contact section" role="region" aria-labelledby="contact-heading">
+      <div class="container contact-grid">
+        <div class="contact-info">
+          <span class="section-label">Get In Touch</span>
+          <h2 id="contact-heading">Contact &amp; Location</h2>
+
+          <div class="contact-item">
+            <span class="contact-icon" aria-hidden="true">📧</span>
+            <div>
+              <strong>Email</strong>
+              <a href="mailto:miller.lana@jmc.edu.ph">miller.lana@jmc.edu.ph</a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <span class="contact-icon" aria-hidden="true">📞</span>
+            <div>
+              <strong>Phone</strong>
+              <a href="tel:+639912943627">+63 991 294 3627</a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <span class="contact-icon" aria-hidden="true">📍</span>
+            <div>
+              <strong>Address</strong>
+              <address>Blk 38, Lot 34, Panacan Veterans Village,<br>Davao City 8000, Philippines</address>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <span class="contact-icon" aria-hidden="true">🕐</span>
+            <div>
+              <strong>Opening Hours</strong>
+              <p>Monday – Saturday: 6:00 AM – 9:00 PM</p>
+              <p>Sunday: 8:00 AM – 5:00 PM</p>
+            </div>
+          </div>
+
+          <div class="social-links" aria-label="Social media links">
+            <a href="#" class="social-btn" aria-label="Follow Bakal Gym on Facebook" rel="noopener noreferrer">
+              <span aria-hidden="true">f</span> Facebook
+            </a>
+            <a href="#" class="social-btn" aria-label="Follow Bakal Gym on Instagram" rel="noopener noreferrer">
+              <span aria-hidden="true">📸</span> Instagram
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-logo-side" aria-hidden="true">
+          <img src="images/logo.jpg" alt="Bakal Gym Logo" class="contact-logo" loading="lazy" />
+          <p class="contact-tagline">Strong. Fit. Confident.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================== FOOTER ======================== -->
+  <footer id="footer" role="contentinfo">
+    <div class="footer-container container">
+      <div class="footer-left">
+        <img src="images/logo.jpg" alt="Bakal Gym Logo" class="footer-logo" loading="lazy" />
+        <p>Strong. Fit. Confident.</p>
+      </div>
+      <div class="footer-center">
+        <h3>Contact Us</h3>
+        <p>Email: <a href="mailto:miller.lana@jmc.edu.ph">miller.lana@jmc.edu.ph</a></p>
+        <p>Phone: +63 991 294 3627</p>
+        <p>Blk 38, Lot 34, Panacan Veterans Village, Davao City 8000</p>
+      </div>
+      <div class="footer-right">
+        <h3>Quick Links</h3>
+        <a href="#hero">Home</a>
+        <a href="#about">About</a>
+        <a href="#programs">Programs</a>
+        <a href="#membership">Membership</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Bakal Gym. All rights reserved.</p>
+      <p class="academic-note">Developed for academic purposes as a final project.</p>
+    </div>
+  </footer>
+
+  <!-- ======================== PAYMENT MODAL (Multi-Step) ======================== -->
+  <div id="payment-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+    aria-hidden="true">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()" aria-label="Close payment modal">&times;</button>
+      <h2 id="modal-title">Complete Your Enrollment</h2>
+      <p class="modal-plan-info">Selected Plan: <strong id="modal-plan-name"></strong> — <strong
+          id="modal-plan-price"></strong></p>
+
+      <!-- Step Indicators -->
+      <div class="step-indicators">
+        <div class="step-dot active" data-step="1">1</div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-step="2">2</div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-step="3">3</div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-step="4">4</div>
+      </div>
+
+      <!-- STEP 1: Fitness Goal -->
+      <div class="modal-step active" id="step-1">
+        <h3 class="step-title">Step 1: Fitness Goal</h3>
+        <p class="step-desc">What is your fitness goal?</p>
+        <div class="goal-options">
+          <label class="goal-option"><input type="radio" name="fitness_goal" value="Lose Weight" /> <span>Lose Weight</span></label>
+          <label class="goal-option"><input type="radio" name="fitness_goal" value="Build Muscle" /> <span>Build Muscle</span></label>
+          <label class="goal-option"><input type="radio" name="fitness_goal" value="Improve Endurance" /> <span>Improve Endurance</span></label>
+          <label class="goal-option"><input type="radio" name="fitness_goal" value="Maintain Fitness" /> <span>Maintain Fitness</span></label>
+          <label class="goal-option"><input type="radio" name="fitness_goal" value="General Health" /> <span>General Health</span></label>
+          <label class="goal-option"><input type="radio" name="fitness_goal" value="Custom Goal" /> <span>Custom Goal</span></label>
+        </div>
+        <div class="form-group" id="custom-goal-group" style="display:none;margin-top:12px;">
+          <label for="custom-goal-input">Your Custom Goal <span aria-hidden="true">*</span></label>
+          <input type="text" id="custom-goal-input" placeholder="e.g. Train for a marathon" />
+        </div>
+        <span class="field-error" id="error-goal" role="alert" aria-live="polite"></span>
+        <div class="modal-nav-buttons">
+          <span></span>
+          <button type="button" class="btn btn-primary" onclick="goToStep(2)">Next</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Fitness Information -->
+      <div class="modal-step" id="step-2">
+        <h3 class="step-title">Step 2: Fitness Information</h3>
+        <p class="step-desc">Tell us about yourself so we can generate a personalized AI suggestion.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fi-sex">Sex <span aria-hidden="true">*</span></label>
+            <select id="fi-sex">
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fi-age">Age <span aria-hidden="true">*</span></label>
+            <input type="text" id="fi-age" placeholder="e.g. 21" inputmode="numeric" maxlength="3" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fi-weight">Current Weight (kg) <span aria-hidden="true">*</span></label>
+            <input type="text" id="fi-weight" placeholder="e.g. 65" inputmode="decimal" />
+          </div>
+          <div class="form-group">
+            <label for="fi-height">Height (cm) <span aria-hidden="true">*</span></label>
+            <input type="text" id="fi-height" placeholder="e.g. 170" inputmode="decimal" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fi-bmi">BMI <span aria-hidden="true">*</span></label>
+            <input type="text" id="fi-bmi" placeholder="e.g. 22.5" inputmode="decimal" />
+          </div>
+          <div class="form-group">
+            <label for="fi-bf">Body Fat % <span style="color:#666;">(optional)</span></label>
+            <input type="text" id="fi-bf" placeholder="e.g. 18" inputmode="decimal" />
+          </div>
+        </div>
+        <span class="field-error" id="error-fitness" role="alert" aria-live="polite"></span>
+        <div class="modal-nav-buttons">
+          <button type="button" class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+          <button type="button" class="btn btn-primary" id="btn-generate" onclick="generateSuggestion()">Generate AI Suggestion</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: AI Suggestion -->
+      <div class="modal-step" id="step-3">
+        <h3 class="step-title">Step 3: AI Fitness Suggestion</h3>
+        <div class="ai-suggestion-box" id="ai-suggestion-box">
+          <p id="ai-loading" style="display:none;text-align:center;color:#aaa;">Generating your personalized fitness suggestion...</p>
+          <div id="ai-suggestion-content"></div>
+        </div>
+        <div class="modal-nav-buttons">
+          <button type="button" class="btn btn-secondary" onclick="goToStep(2)">Back</button>
+          <button type="button" class="btn btn-download" id="btn-download-pdf" onclick="downloadPDF()" style="display:none;">Download PDF</button>
+          <button type="button" class="btn btn-primary" id="btn-continue-enroll" onclick="goToStep(4)" style="display:none;">Continue to Enrollment</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Enrollment Form -->
+      <div class="modal-step" id="step-4">
+        <h3 class="step-title">Step 4: Enrollment Details</h3>
+        <form id="payment-form" novalidate aria-label="Payment enrollment form" onsubmit="submitPayment(event)">
+          <div class="form-group">
+            <label for="modal-name">Full Name <span aria-hidden="true">*</span></label>
+            <input type="text" id="modal-name" name="fullname" placeholder="e.g. Juan Dela Cruz" required
+              autocomplete="name" aria-describedby="error-name" />
+            <span class="field-error" id="error-name" role="alert" aria-live="polite"></span>
+          </div>
+          <div class="form-group">
+            <label for="modal-contact">Contact Number <span aria-hidden="true">*</span></label>
+            <input type="tel" id="modal-contact" name="contact" placeholder="e.g. 09XXXXXXXXX" required autocomplete="tel"
+              inputmode="numeric" pattern="[0-9]*" maxlength="11" aria-describedby="error-contact" />
+            <span class="field-error" id="error-contact" role="alert" aria-live="polite"></span>
+          </div>
+          <div class="form-group">
+            <label for="modal-email">Email Address <span aria-hidden="true">*</span></label>
+            <input type="email" id="modal-email" name="email" placeholder="e.g. juan@email.com" required
+              autocomplete="email" aria-describedby="error-email" />
+            <span class="field-error" id="error-email" role="alert" aria-live="polite"></span>
+          </div>
+          <div class="modal-nav-buttons">
+            <button type="button" class="btn btn-secondary" onclick="goToStep(3)">Back</button>
+            <button type="submit" class="btn btn-primary" id="modal-submit-btn">Proceed to Payment</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
