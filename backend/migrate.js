@@ -1,14 +1,17 @@
+// SSL Bypass for Render
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 const { Client } = require('pg');
 require('dotenv').config();
 
 // The real Render connection string
-const connectionString = 'postgresql://bakal_gym_db_user:DZ6wJcj2avhcdwca6a0A5xytTFVN73jt@dpg-d7n7p33eo5us73f68br0-a/bakal_gym_db?ssl=true';
+const connectionString = 'postgresql://bakal_gym_db_user:DZ6wJcj2avhcdwca6a0A5xytTFVN73jt@dpg-d7n7p33eo5us73f68br0-a/bakal_gym_db';
 
 async function migrate() {
-  console.log('🚀 Starting Render Database Setup...');
+  console.log('🚀 Starting Render Database Setup (SSL Bypass Active)...');
   const client = new Client({ 
     connectionString,
-    ssl: { rejectUnauthorized: false } // Required for Render
+    ssl: { rejectUnauthorized: false } 
   });
 
   try {
