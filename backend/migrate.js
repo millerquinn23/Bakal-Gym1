@@ -1,35 +1,22 @@
 const { Client } = require('pg');
 require('dotenv').config();
 
-// Connect to the default 'postgres' database first to create the target DB
-const connectionString = 'postgresql://bakal_gym_db_user:DZ6wJcj2avhcdwca6a0A5xytTFVN73jt@dpg-d7n7p33eo5us73f68br0-a/bakal_gym_db';
+// The real Render connection string
+const connectionString = 'postgresql://bakal_gym_db_user:DZ6wJcj2avhcdwca6a0A5xytTFVN73jt@dpg-d7n7p33eo5us73f68br0-a/bakal_gym_db?ssl=true';
 
 async function migrate() {
-  console.log('🚀 Starting Database Setup...');
-  const client = new Client({ connectionString });
+  console.log('🚀 Starting Render Database Setup...');
+  const client = new Client({ 
+    connectionString,
+    ssl: { rejectUnauthorized: false } // Required for Render
+  });
 
   try {
     await client.connect();
-
-    // 1. Create the database if it doesn't exist
-    try {
-      await client.query('CREATE DATABASE bakal_gym');
-      console.log('✅ Created database: bakal_gym');
-    } catch (err) {
-      if (err.code === '42P04') {
-        console.log('ℹ️ Database bakal_gym already exists.');
-      } else {
-        throw err;
-      }
-    }
-    await client.end();
-
-    // 2. Connect to the new database to create/update tables
-    const gymClient = new Client({ connectionString: 'postgresql://postgres:12345@localhost:5432/bakal_gym' });
-    await gymClient.connect();
+    console.log('✅ Connected to Render Database.');
 
     // Create memberships table if it doesn't exist
-    await gymClient.query(`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS memberships (
         id UUID PRIMARY KEY,
         customer_name TEXT NOT NULL,
@@ -68,7 +55,7 @@ async function migrate() {
 
     for (const [name, type] of columns) {
       try {
-        await gymClient.query(`ALTER TABLE memberships ADD COLUMN ${name} ${type}`);
+        await client.query(`ALTER TABLE memberships ADD COLUMN ${name} ${type}`);
         console.log(`✅ Added column: ${name}`);
       } catch (err) {
         if (err.code === '42701') {
@@ -79,8 +66,8 @@ async function migrate() {
       }
     }
 
-    await gymClient.end();
-    console.log('✅ Setup complete! You can now proceed to payment.');
+    await client.end();
+    console.log('✅ Setup complete on Render!');
     process.exit(0);
   } catch (err) {
     console.error('❌ Setup failed:', err.message);
