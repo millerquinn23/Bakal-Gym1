@@ -2,7 +2,7 @@ const { Client } = require('pg');
 require('dotenv').config();
 
 // Connect to the default 'postgres' database first to create the target DB
-const connectionString = 'postgresql://postgres:12345@localhost:5432/postgres';
+const connectionString = 'postgresql://bakal_gym_db_user:DZ6wJcj2avhcdwca6a0A5xytTFVN73jt@dpg-d7n7p33eo5us73f68br0-a/bakal_gym_db';
 
 async function migrate() {
   console.log('🚀 Starting Database Setup...');
@@ -10,7 +10,7 @@ async function migrate() {
 
   try {
     await client.connect();
-    
+
     // 1. Create the database if it doesn't exist
     try {
       await client.query('CREATE DATABASE bakal_gym');
