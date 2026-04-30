@@ -4,7 +4,7 @@
    ============================================================ */
 
 // ── BACKEND CONFIG ──────────────────────────────────────────
-const API_BASE_URL = window.location.origin;
+const API_BASE_URL = window.location.port === '3000' ? window.location.origin : 'http://localhost:3000';
 
 const PLAN_AMOUNTS = {
   '1 Month Plan': 100,
@@ -104,18 +104,47 @@ function resetAllSteps() {
   // Reset Step 3
   const aiContent = document.getElementById('ai-suggestion-content');
   if (aiContent) aiContent.innerHTML = '';
-  const aiLoading = document.getElementById('ai-loading');
-  if (aiLoading) aiLoading.style.display = 'none';
+  const aiStatusContainer = document.getElementById('ai-status-container');
+  if (aiStatusContainer) aiStatusContainer.style.display = 'none';
   const btnPdf = document.getElementById('btn-download-pdf');
   if (btnPdf) btnPdf.style.display = 'none';
   const btnContinue = document.getElementById('btn-continue-enroll');
   if (btnContinue) btnContinue.style.display = 'none';
+
+  // Reset Photo Upload
+  if (typeof resetPhotoUpload === 'function') resetPhotoUpload();
 
   // Reset Step 4
   if (modalForm) modalForm.reset();
   clearAllErrors();
   setSubmitLoading(false);
 }
+
+// ── BMI CALCULATION ─────────────────────────────────────────
+function calculateBMI() {
+  const weightInput = document.getElementById('fi-weight');
+  const heightInput = document.getElementById('fi-height');
+  const bmiInput = document.getElementById('fi-bmi');
+
+  if (!weightInput || !heightInput || !bmiInput) return;
+
+  const weight = parseFloat(weightInput.value);
+  const height = parseFloat(heightInput.value) / 100; // convert cm to m
+
+  if (weight > 0 && height > 0) {
+    const bmi = (weight / (height * height)).toFixed(1);
+    bmiInput.value = bmi;
+    hideError('error-fitness'); // Clear error once calculated
+  } else {
+    bmiInput.value = '';
+  }
+}
+
+// Attach BMI listeners
+['fi-weight', 'fi-height'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', calculateBMI);
+});
 
 // ── STEP NAVIGATION ─────────────────────────────────────────
 function goToStep(step) {
@@ -201,15 +230,81 @@ function validateStep2() {
   return true;
 }
 
+// ── PHOTO UPLOAD HANDLING ────────────────────────────────────
+const photoUploadZone = document.getElementById('photo-upload-zone');
+const photoInput = document.getElementById('fi-photo');
+const photoPreviewContainer = document.getElementById('photo-preview-container');
+const photoPreview = document.getElementById('photo-preview');
+const uploadPlaceholder = document.getElementById('upload-placeholder');
+const btnRemovePhoto = document.getElementById('btn-remove-photo');
+
+let base64Image = null;
+
+if (photoUploadZone) {
+  photoUploadZone.addEventListener('click', () => photoInput.click());
+  
+  photoUploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    photoUploadZone.classList.add('drag-over');
+  });
+
+  photoUploadZone.addEventListener('dragleave', () => {
+    photoUploadZone.classList.remove('drag-over');
+  });
+
+  photoUploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    photoUploadZone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) {
+      handlePhotoFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  photoInput.addEventListener('change', (e) => {
+    if (e.target.files.length) {
+      handlePhotoFile(e.target.files[0]);
+    }
+  });
+
+  btnRemovePhoto.addEventListener('click', (e) => {
+    e.stopPropagation();
+    resetPhotoUpload();
+  });
+}
+
+function handlePhotoFile(file) {
+  if (!file.type.startsWith('image/')) {
+    alert('Please upload an image file.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    base64Image = e.target.result;
+    photoPreview.src = base64Image;
+    photoPreviewContainer.style.display = 'block';
+    uploadPlaceholder.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetPhotoUpload() {
+  base64Image = null;
+  photoInput.value = '';
+  photoPreview.src = '';
+  photoPreviewContainer.style.display = 'none';
+  uploadPlaceholder.style.display = 'block';
+}
+
 // ── GENERATE AI SUGGESTION ──────────────────────────────────
 async function generateSuggestion() {
   if (!validateStep2()) return;
 
   const btnGen = document.getElementById('btn-generate');
   btnGen.disabled = true;
-  btnGen.textContent = 'Generating...';
+  btnGen.textContent = 'Analyzing...';
 
-  // Move to step 3 and show loading
+  // Move to step 3 and show scanning animation
   currentStep = 3;
   document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
   document.getElementById('step-3').classList.add('active');
@@ -220,10 +315,13 @@ async function generateSuggestion() {
     else if (ds < 3) dot.classList.add('done');
   });
 
-  const aiLoading = document.getElementById('ai-loading');
+  const aiStatusContainer = document.getElementById('ai-status-container');
   const aiContent = document.getElementById('ai-suggestion-content');
-  aiLoading.style.display = 'block';
+  const aiLoadingText = document.getElementById('ai-loading-text');
+  
+  aiStatusContainer.style.display = 'block';
   aiContent.innerHTML = '';
+  aiLoadingText.textContent = 'ANALYZING BIOMETRICS...';
 
   const goalRadio = document.querySelector('input[name="fitness_goal"]:checked');
   const fitnessGoal = goalRadio ? goalRadio.value : '';
@@ -238,10 +336,15 @@ async function generateSuggestion() {
     height: document.getElementById('fi-height').value.trim(),
     bmi: document.getElementById('fi-bmi').value.trim(),
     body_fat_percentage: document.getElementById('fi-bf').value.trim() || null,
+    physique_photo: base64Image, // Send the base64 image
     selected_plan: selectedPlan,
   };
 
   try {
+    // Artificial delay for futuristic UX feel
+    setTimeout(() => { aiLoadingText.textContent = 'NEURAL PATTERN ANALYSIS...'; }, 800);
+    setTimeout(() => { aiLoadingText.textContent = 'OPTIMIZING TRAINING REGIMEN...'; }, 1600);
+
     const resp = await fetch(`${API_BASE_URL}/api/generate-fitness-suggestion`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -249,27 +352,102 @@ async function generateSuggestion() {
     });
 
     const data = await resp.json();
-    aiSuggestionText = data.suggestion || 'No suggestion available.';
+    if (data.success) {
+      aiSuggestionText = data.suggestion;
+    } else {
+      aiSuggestionText = 'Error: ' + (data.message || 'Unknown error occurred.');
+    }
   } catch (err) {
     console.error('AI suggestion error:', err);
-    aiSuggestionText = 'Unable to generate AI suggestion at this time. You can still proceed with your enrollment.';
+    aiSuggestionText = 'Unable to connect to the server. Please try again later.';
   }
 
-  aiLoading.style.display = 'none';
+  aiStatusContainer.style.display = 'none';
 
-  // Display the suggestion as clean formatted text
-  const lines = aiSuggestionText.split('\n');
-  let html = '';
-  lines.forEach(line => {
-    const trimmed = line.trim();
-    if (!trimmed) {
-      html += '<br>';
-    } else if (/^\d+\.\s/.test(trimmed)) {
-      html += '<p class="ai-section-title">' + escapeHtml(trimmed) + '</p>';
-    } else {
-      html += '<p class="ai-section-text">' + escapeHtml(trimmed) + '</p>';
+  // 1. USER SUMMARY
+  const sex = document.getElementById('fi-sex').value;
+  const age = document.getElementById('fi-age').value.trim();
+  const weight = document.getElementById('fi-weight').value.trim();
+  const height = document.getElementById('fi-height').value.trim();
+  const bmi = document.getElementById('fi-bmi').value.trim();
+  const goalText = fitnessGoal === 'Custom Goal' && customGoal ? customGoal : fitnessGoal;
+
+  let html = `
+    <div class="ai-user-summary">
+      <span><strong>Goal:</strong> ${escapeHtml(goalText)}</span>
+      <span><strong>Age:</strong> ${escapeHtml(age)}</span>
+      <span><strong>Weight:</strong> ${escapeHtml(weight)}kg</span>
+      <span><strong>Height:</strong> ${escapeHtml(height)}cm</span>
+      <span><strong>BMI:</strong> ${escapeHtml(bmi)}</span>
+      ${base64Image ? '<span><strong>Physique Analysis:</strong> ACTIVE</span>' : ''}
+    </div>
+  `;
+
+  // 2. PARSE SECTIONS
+  // The AI returns: WEEKLY WORKOUT PLAN:, NUTRITION PLAN:, NOTES:, DISCLAIMER:
+  const text = aiSuggestionText;
+
+  // Extract Weekly Plan
+  const weeklyMatch = text.match(/WEEKLY WORKOUT PLAN:([\s\S]*?)NUTRITION PLAN:/i);
+  if (weeklyMatch) {
+    html += '<h3 class="ai-section-heading">Weekly Workout Plan</h3>';
+    html += '<div class="ai-weekly-grid">';
+    const days = weeklyMatch[1].trim().split(/\n(?=[A-Z][a-z]+:)/);
+    days.forEach(dayStr => {
+      const parts = dayStr.split(':');
+      if (parts.length >= 2) {
+        const dayName = parts[0].trim();
+        const content = parts.slice(1).join(':').trim();
+        const exercises = content.split('\n').map(ex => ex.replace(/^-\s*/, '').trim()).filter(Boolean);
+        
+        html += `
+          <div class="ai-day-card">
+            <h4>${escapeHtml(dayName)}</h4>
+            <ul>
+              ${exercises.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
+    });
+    html += '</div>';
+  }
+
+  // Extract Nutrition
+  const nutritionMatch = text.match(/NUTRITION PLAN:([\s\S]*?)NOTES:/i);
+  if (nutritionMatch) {
+    html += '<h3 class="ai-section-heading">Nutrition Plan</h3>';
+    html += '<div class="ai-nutrition-box">';
+    const lines = nutritionMatch[1].trim().split('\n').filter(Boolean);
+    lines.forEach(line => {
+      html += `<p>${escapeHtml(line.trim())}</p>`;
+    });
+    html += '</div>';
+  }
+
+  // Extract Notes
+  const notesMatch = text.match(/NOTES:([\s\S]*?)DISCLAIMER:/i);
+  if (notesMatch) {
+    html += '<h3 class="ai-section-heading">Notes</h3>';
+    html += '<ul class="ai-notes-list">';
+    const lines = notesMatch[1].trim().split('\n').filter(Boolean);
+    lines.forEach(line => {
+      html += `<li>${escapeHtml(line.replace(/^-\s*/, '').trim())}</li>`;
+    });
+    html += '</ul>';
+  }
+
+  // Extract Disclaimer
+  const disclaimerMatch = text.match(/DISCLAIMER:([\s\S]*)$/i);
+  if (disclaimerMatch) {
+    html += `<div class="ai-disclaimer-text">${escapeHtml(disclaimerMatch[1].trim().replace(/^-\s*/, ''))}</div>`;
+  } else {
+    // Fallback if regex fails but we have text
+    if (!weeklyMatch && !nutritionMatch) {
+        html += `<div class="ai-section-text">${escapeHtml(text)}</div>`;
     }
-  });
+  }
+
   aiContent.innerHTML = html;
 
   // Show buttons
@@ -287,107 +465,116 @@ function escapeHtml(str) {
 
 // ── PDF DOWNLOAD ────────────────────────────────────────────
 function downloadPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  try {
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) throw new Error('jsPDF library not loaded.');
 
-  const margin = 20;
-  let y = 20;
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const maxWidth = pageWidth - margin * 2;
+    const doc = new jsPDF();
+    const margin = 20;
+    let y = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxWidth = pageWidth - margin * 2;
 
-  // Title
-  doc.setFontSize(20);
-  doc.setFont('helvetica', 'bold');
-  doc.text('BAKAL GYM', margin, y);
-  y += 8;
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
-  doc.text('AI Fitness Recommendation Report', margin, y);
-  y += 12;
-
-  // Divider
-  doc.setDrawColor(227, 38, 54);
-  doc.setLineWidth(0.8);
-  doc.line(margin, y, pageWidth - margin, y);
-  y += 10;
-
-  // User Info
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Enrollment Details', margin, y);
-  y += 7;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-
-  const goalRadio = document.querySelector('input[name="fitness_goal"]:checked');
-  const fitnessGoal = goalRadio ? goalRadio.value : '';
-  const customGoal = fitnessGoal === 'Custom Goal' ? document.getElementById('custom-goal-input').value.trim() : '';
-  const goalDisplay = fitnessGoal === 'Custom Goal' && customGoal ? customGoal : fitnessGoal;
-
-  const info = [
-    ['Selected Plan', selectedPlan + ' (' + selectedPrice + ')'],
-    ['Fitness Goal', goalDisplay],
-    ['Sex', document.getElementById('fi-sex').value],
-    ['Age', document.getElementById('fi-age').value.trim()],
-    ['Current Weight', document.getElementById('fi-weight').value.trim() + ' kg'],
-    ['Height', document.getElementById('fi-height').value.trim() + ' cm'],
-    ['BMI', document.getElementById('fi-bmi').value.trim()],
-  ];
-
-  const bf = document.getElementById('fi-bf').value.trim();
-  if (bf) info.push(['Body Fat %', bf + '%']);
-
-  info.forEach(([label, val]) => {
+    // Title
+    doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text(label + ':', margin, y);
+    doc.text('BAKAL GYM', margin, y);
+    y += 8;
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text(val, margin + 45, y);
+    doc.text('AI Fitness Recommendation Report', margin, y);
+    y += 12;
+
+    // Divider
+    doc.setDrawColor(227, 38, 54);
+    doc.setLineWidth(0.8);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 10;
+
+    // User Info
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Enrollment Details', margin, y);
+    y += 7;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+
+    const goalRadio = document.querySelector('input[name="fitness_goal"]:checked');
+    const fitnessGoal = goalRadio ? goalRadio.value : 'N/A';
+    const customGoalEl = document.getElementById('custom-goal-input');
+    const customGoal = (fitnessGoal === 'Custom Goal' && customGoalEl) ? customGoalEl.value.trim() : '';
+    const goalDisplay = customGoal || fitnessGoal;
+
+    const info = [
+      ['Selected Plan', (selectedPlan || 'N/A') + ' (' + (selectedPrice || 'N/A') + ')'],
+      ['Fitness Goal', goalDisplay],
+      ['Sex', document.getElementById('fi-sex')?.value || 'N/A'],
+      ['Age', document.getElementById('fi-age')?.value?.trim() || 'N/A'],
+      ['Current Weight', (document.getElementById('fi-weight')?.value?.trim() || 'N/A') + ' kg'],
+      ['Height', (document.getElementById('fi-height')?.value?.trim() || 'N/A') + ' cm'],
+      ['BMI', document.getElementById('fi-bmi')?.value?.trim() || 'N/A'],
+    ];
+
+    const bf = document.getElementById('fi-bf')?.value?.trim();
+    if (bf) info.push(['Body Fat %', bf + '%']);
+
+    info.forEach(([label, val]) => {
+      doc.setFont('helvetica', 'bold');
+      doc.text(label + ':', margin, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(String(val), margin + 45, y);
+      y += 6;
+    });
+
     y += 6;
-  });
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 8;
 
-  y += 6;
-  doc.setDrawColor(200, 200, 200);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y, pageWidth - margin, y);
-  y += 8;
-
-  // AI Suggestion
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-  doc.text('AI Fitness Suggestion', margin, y);
-  y += 7;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-
-  const suggestionLines = doc.splitTextToSize(aiSuggestionText, maxWidth);
-  suggestionLines.forEach(line => {
-    if (y > 270) {
-      doc.addPage();
-      y = 20;
+    // AI Suggestion Parsing
+    const text = aiSuggestionText || 'No suggestion data available.';
+    
+    // Helper to find and print a section
+    function addSection(title, regex, color) {
+      const match = text.match(regex);
+      if (match && match[1]) {
+        if (y > 250) { doc.addPage(); y = 20; }
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(color[0], color[1], color[2]);
+        doc.text(title, margin, y);
+        y += 8;
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        
+        const content = match[1].trim();
+        const splitText = doc.splitTextToSize(content, maxWidth);
+        doc.text(splitText, margin, y);
+        y += (splitText.length * 5) + 10;
+        return true;
+      }
+      return false;
     }
-    doc.text(line, margin, y);
-    y += 5;
-  });
 
-  // Disclaimer
-  y += 8;
-  if (y > 260) {
-    doc.addPage();
-    y = 20;
+    const hasWorkout = addSection('WEEKLY WORKOUT PLAN', /WEEKLY WORKOUT PLAN:([\s\S]*?)(NUTRITION PLAN:|NOTES:|DISCLAIMER:|$)/i, [227, 38, 54]);
+    const hasNutrition = addSection('NUTRITION PLAN', /NUTRITION PLAN:([\s\S]*?)(NOTES:|DISCLAIMER:|$)/i, [227, 38, 54]);
+    const hasNotes = addSection('NOTES', /NOTES:([\s\S]*?)(DISCLAIMER:|$)/i, [227, 38, 54]);
+
+    if (!hasWorkout && !hasNutrition) {
+      // Complete fallback for non-structured text
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      const splitText = doc.splitTextToSize(text, maxWidth);
+      doc.text(splitText, margin, y);
+    }
+
+    doc.save('Bakal_Gym_Fitness_Report.pdf');
+  } catch (err) {
+    console.error('PDF Error:', err);
+    alert('Failed to generate PDF. Please try again.');
   }
-  doc.setDrawColor(200, 200, 200);
-  doc.line(margin, y, pageWidth - margin, y);
-  y += 6;
-  doc.setFontSize(8);
-  doc.setTextColor(120, 120, 120);
-  const disclaimer = 'Disclaimer: This AI-generated fitness suggestion is for general guidance only and is not a medical or professional fitness diagnosis.';
-  const discLines = doc.splitTextToSize(disclaimer, maxWidth);
-  discLines.forEach(line => {
-    doc.text(line, margin, y);
-    y += 4;
-  });
-
-  doc.save('Bakal_Gym_Fitness_Report.pdf');
 }
 
 // ── NUMBERS ONLY — CONTACT FIELD ────────────────────────────

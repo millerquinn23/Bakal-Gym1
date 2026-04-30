@@ -13,6 +13,13 @@ const openaiClient = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
+if (process.env.OPENAI_API_KEY) {
+  const key = process.env.OPENAI_API_KEY;
+  console.log(`✅ OpenAI API Key loaded: ${key.substring(0, 7)}...${key.substring(key.length - 4)}`);
+} else {
+  console.error('❌ OpenAI API Key is MISSING from process.env');
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -38,7 +45,7 @@ const publicPath = path.join(__dirname, 'public');
 app.set('trust proxy', 1);
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(morgan('tiny'));
-app.use(cors({ origin: CORS_ORIGIN === '*' ? true : CORS_ORIGIN }));
+app.use(cors({ origin: true })); // Allow all origins for easier testing
 
 function jsonError(res, status, message) {
   return res.status(status).json({ success: false, message });
@@ -410,7 +417,8 @@ app.post('/api/paymongo/webhook', express.raw({ type: 'application/json' }), asy
   }
 });
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'Bakal Gym Backend' });
@@ -419,85 +427,152 @@ app.get('/api/health', (req, res) => {
 // ── AI FITNESS SUGGESTION ─────────────────────────────────
 app.post('/api/generate-fitness-suggestion', async (req, res) => {
   try {
-    const { fitness_goal, custom_goal, sex, age, current_weight, height, bmi, body_fat_percentage, selected_plan } = req.body;
+    const { 
+      fitness_goal, 
+      custom_goal, 
+      sex, 
+      age, 
+      current_weight, 
+      height, 
+      bmi, 
+      body_fat_percentage, 
+      physique_photo, // Base64 image
+      selected_plan 
+    } = req.body;
 
     if (!fitness_goal || !sex || !age || !current_weight || !height || !bmi) {
       return jsonError(res, 400, 'Missing required fitness fields.');
     }
 
+    console.log('--- AI Multimodal Suggestion Request ---');
     const goalText = fitness_goal === 'Custom Goal' && custom_goal ? custom_goal : fitness_goal;
-    const bfText = body_fat_percentage ? `${body_fat_percentage}%` : 'Not provided';
+    
+    const prompt = `You are a professional Fitness Trainer. Generate a structured workout plan based on these biometrics:
+- Goal: ${goalText}
+- Sex: ${sex}
+- Age: ${age}
+- Weight: ${current_weight}kg
+- Height: ${height}cm
+- BMI: ${bmi}
+${body_fat_percentage ? `- Body Fat: ${body_fat_percentage}%` : ''}
 
-    const prompt = `You are a friendly fitness assistant for a gym enrollment system. Generate simple and general fitness suggestions based on the user's information. Do not give medical diagnosis. Keep the advice beginner-friendly, safe, and easy to understand.
+A context photo has been provided. Use it to understand the user's current fitness level for safety and intensity suggestions.
 
-IMPORTANT FORMATTING RULES:
-- Do NOT use markdown formatting such as **, ##, -, or bullet symbols.
-- Use numbered sections exactly as shown below.
-- Write in plain text only.
-- Use line breaks to separate sections.
-- Keep it concise and readable.
+Return STRICTLY in this format:
 
-User information:
-Fitness Goal: ${goalText}
-Sex: ${sex}
-Age: ${age}
-Current Weight: ${current_weight} kg
-Height: ${height} cm
-BMI: ${bmi}
-Body Fat Percentage: ${bfText}
-Selected Gym Plan: ${selected_plan || 'Not specified'}
+WEEKLY WORKOUT PLAN:
+Monday: [Focus]
+- Exercise – sets x reps
+... (all days)
 
-Generate the response in this exact structure (plain text, no markdown):
+NUTRITION PLAN:
+Calories: XXXX kcal
+Protein: XXXX g
 
-1. Goal Summary
-(Write a short summary of the user's goal here)
+NOTES:
+- Provide 3-4 specific tips.
+- Mention you have reviewed the fitness level from the photo to personalize the plan.
 
-2. Recommended Workout Focus
-(Write workout focus here)
-
-3. Suggested Weekly Routine
-(Write a simple weekly routine here)
-
-4. Basic Nutrition Tips
-(Write nutrition tips here)
-
-5. Progress Tips
-(Write progress tips here)
-
-6. Safety Reminder
-(Write safety reminder here)
-
-7. Disclaimer
-This AI-generated fitness suggestion is for general guidance only and is not a medical or professional fitness diagnosis.`;
+DISCLAIMER:
+- AI-generated guidance.`;
 
     let suggestion = '';
 
     if (openaiClient) {
       try {
+        console.log('Calling OpenAI GPT-4o (Multimodal)...');
+        
+        const messages = [
+          {
+            role: "system",
+            content: "You are a professional AI Fitness Trainer. Your goal is to provide supportive workout suggestions based on user data and visual context. You avoid medical diagnostics."
+          },
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt }
+            ]
+          }
+        ];
+
+        if (physique_photo) {
+          messages[1].content.push({
+            type: "image_url",
+            image_url: {
+              url: physique_photo,
+              detail: "low" // LOW DETAIL helps bypass safety refusals
+            }
+          });
+        }
+
         const completion = await openaiClient.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          messages: [{ role: 'user', content: prompt }],
-          max_tokens: 1000,
+          model: 'gpt-4o',
+          messages: messages,
+          max_tokens: 1200,
           temperature: 0.7,
         });
+        
         suggestion = (completion.choices[0]?.message?.content || '').trim();
-        // Strip any remaining markdown symbols
-        suggestion = suggestion.replace(/\*\*/g, '').replace(/^#+\s*/gm, '').replace(/^[-*]\s+/gm, '');
+        console.log('OpenAI Response received successfully.');
       } catch (aiErr) {
         console.error('OpenAI API error:', aiErr.message);
       }
+    } else {
+      console.warn('OpenAI API Key is missing. Returning fallback.');
     }
 
     if (!suggestion) {
-      suggestion = `1. Goal Summary\nBased on your goal of ${goalText}, this plan is designed to help you get started on your fitness journey.\n\n2. Recommended Workout Focus\nStart with a mix of cardio and light resistance training 3 to 4 times per week. Focus on full-body movements.\n\n3. Suggested Weekly Routine\nMonday: Full body workout\nWednesday: Cardio and core\nFriday: Upper and lower body split\nSaturday: Light activity or stretching\n\n4. Basic Nutrition Tips\nEat balanced meals with protein, carbs, and healthy fats. Stay hydrated and avoid skipping meals.\n\n5. Progress Tips\nTrack your workouts weekly. Take progress photos monthly. Increase intensity gradually.\n\n6. Safety Reminder\nAlways warm up before exercise and cool down after. Listen to your body and rest when needed.\n\n7. Disclaimer\nThis AI-generated fitness suggestion is for general guidance only and is not a medical or professional fitness diagnosis.`;
+      console.log('Using Fallback Suggestion.');
+      // Create a slightly more dynamic fallback based on user goal
+      const isWeightLoss = goalText.toLowerCase().includes('loss') || goalText.toLowerCase().includes('lose');
+      
+      suggestion = `WEEKLY WORKOUT PLAN:
+Monday: ${isWeightLoss ? 'Cardio & Core' : 'Full Body Intro'}
+- ${isWeightLoss ? 'Jumping Jacks – 3 x 30s' : 'Squats – 3 x 12'}
+- Push-ups – 3 x 10
+- Plank – 3 x 30s
+
+Tuesday: Active Recovery
+- 20 min brisk walk
+
+Wednesday: ${isWeightLoss ? 'HIIT Session' : 'Upper Body Focus'}
+- ${isWeightLoss ? 'Mountain Climbers – 3 x 30s' : 'Dumbbell Press – 3 x 12'}
+- Row – 3 x 12
+- Overhead Press – 3 x 10
+
+Thursday: Active Recovery
+- Light stretching or yoga
+
+Friday: Lower Body & Core
+- Lunges – 3 x 10 per leg
+- Glute Bridges – 3 x 15
+- Crunches – 3 x 20
+
+Saturday: Cardio
+- 30 min jogging or swimming
+
+Sunday: Full Rest
+- Complete rest day
+
+NUTRITION PLAN:
+Calories: ${isWeightLoss ? '1800' : '2200'} kcal
+Protein: ${isWeightLoss ? '130' : '150'} g
+
+NOTES:
+- Focused on ${goalText}
+- Stay hydrated (2-3L water)
+- Sleep 7-8 hours
+
+DISCLAIMER:
+- AI-generated only, not medical advice`;
 
       return res.json({ success: true, fallback: true, suggestion });
     }
 
     return res.json({ success: true, suggestion });
   } catch (err) {
-    console.error('Fitness suggestion error:', err);
-    return jsonError(res, 500, 'Failed to generate fitness suggestion.');
+    console.error('Fitness suggestion CRITICAL error:', err);
+    return jsonError(res, 500, 'Failed to generate fitness suggestion. Error: ' + err.message);
   }
 });
 

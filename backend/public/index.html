@@ -463,40 +463,57 @@
       <!-- STEP 2: Fitness Information -->
       <div class="modal-step" id="step-2">
         <h3 class="step-title">Step 2: Fitness Information</h3>
-        <p class="step-desc">Tell us about yourself so we can generate a personalized AI suggestion.</p>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fi-sex">Sex <span aria-hidden="true">*</span></label>
-            <select id="fi-sex">
-              <option value="">Select</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
+        <div style="flex: 1; overflow-y: auto; margin-bottom: 10px; padding-right: 10px;">
+          <p class="step-desc">Tell us about yourself so we can generate a personalized AI suggestion.</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fi-sex">Sex <span aria-hidden="true">*</span></label>
+              <select id="fi-sex">
+                <option value="">Select Sex</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fi-age">Age <span aria-hidden="true">*</span></label>
+              <input type="text" id="fi-age" placeholder="e.g. 21" maxlength="2" />
+            </div>
           </div>
-          <div class="form-group">
-            <label for="fi-age">Age <span aria-hidden="true">*</span></label>
-            <input type="text" id="fi-age" placeholder="e.g. 21" inputmode="numeric" maxlength="3" />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fi-weight">Current Weight (kg) <span aria-hidden="true">*</span></label>
+              <input type="text" id="fi-weight" placeholder="e.g. 65" />
+            </div>
+            <div class="form-group">
+              <label for="fi-height">Height (cm) <span aria-hidden="true">*</span></label>
+              <input type="text" id="fi-height" placeholder="e.g. 170" />
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fi-weight">Current Weight (kg) <span aria-hidden="true">*</span></label>
-            <input type="text" id="fi-weight" placeholder="e.g. 65" inputmode="decimal" />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fi-bmi">BMI <span aria-hidden="true">*</span></label>
+              <input type="text" id="fi-bmi" placeholder="e.g. 22.5" readonly style="background: #1a1a1a; cursor: not-allowed;" />
+            </div>
+            <div class="form-group">
+              <label for="fi-bf">Body Fat % (optional)</label>
+              <input type="text" id="fi-bf" placeholder="e.g. 18" />
+            </div>
           </div>
-          <div class="form-group">
-            <label for="fi-height">Height (cm) <span aria-hidden="true">*</span></label>
-            <input type="text" id="fi-height" placeholder="e.g. 170" inputmode="decimal" />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fi-bmi">BMI <span aria-hidden="true">*</span></label>
-            <input type="text" id="fi-bmi" placeholder="e.g. 22.5" inputmode="decimal" />
-          </div>
-          <div class="form-group">
-            <label for="fi-bf">Body Fat % <span style="color:#666;">(optional)</span></label>
-            <input type="text" id="fi-bf" placeholder="e.g. 18" inputmode="decimal" />
+          <div class="form-group" style="margin-top:10px;">
+            <label for="fi-photo">Current Physique Photo (optional)</label>
+            <div class="photo-upload-zone" id="photo-upload-zone">
+              <input type="file" id="fi-photo" accept="image/*" hidden />
+              <div class="upload-placeholder" id="upload-placeholder">
+                <span class="upload-icon">📷</span>
+                <p>Click to upload physique photo</p>
+                <small>AI will analyze your photo for better results</small>
+              </div>
+              <div id="photo-preview-container" style="display: none;">
+                <img id="photo-preview" src="" alt="Physique Preview" />
+                <button type="button" class="btn-remove-photo" id="btn-remove-photo">&times;</button>
+              </div>
+            </div>
           </div>
         </div>
         <span class="field-error" id="error-fitness" role="alert" aria-live="polite"></span>
@@ -509,9 +526,15 @@
       <!-- STEP 3: AI Suggestion -->
       <div class="modal-step" id="step-3">
         <h3 class="step-title">Step 3: AI Fitness Suggestion</h3>
-        <div class="ai-suggestion-box" id="ai-suggestion-box">
-          <p id="ai-loading" style="display:none;text-align:center;color:#aaa;">Generating your personalized fitness suggestion...</p>
-          <div id="ai-suggestion-content"></div>
+        <div style="flex: 1; overflow-y: auto; margin-bottom: 10px; padding-right: 10px;" id="ai-scroll-container">
+          <div class="ai-suggestion-box" id="ai-suggestion-box">
+            <div id="ai-status-container" style="display:none;">
+              <div class="ai-badge">NEURAL ENGINE V4.0 ACTIVE</div>
+              <div class="scanning-bar"></div>
+              <p id="ai-loading-text" style="text-align:center;color:var(--red);font-weight:bold;margin-top:10px;">ANALYZING BIOMETRICS...</p>
+            </div>
+            <div id="ai-suggestion-content"></div>
+          </div>
         </div>
         <div class="modal-nav-buttons">
           <button type="button" class="btn btn-secondary" onclick="goToStep(2)">Back</button>
